@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/20 07:00:59 by wluong            #+#    #+#             */
-/*   Updated: 2022/03/02 02:24:44 by wluong           ###   ########.fr       */
+/*   Updated: 2022/03/09 04:15:33 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,25 +306,25 @@ namespace ft {
 				return tmp;
 			};
 
-			reverse_iterator operator+ (difference_type n) const {
+			reverse_iterator operator+ (typename reverse_iterator<Iterator>::difference_type n) const {
 				return reverse_iterator(current - n);
 			};
 
-			reverse_iterator& operator+=(difference_type n) {
+			reverse_iterator& operator+=(typename reverse_iterator<Iterator>::difference_type n) {
 				current -= n;
 				return *this;
 			};
 
-			reverse_iterator operator- (difference_type n) const {
+			reverse_iterator operator- (typename reverse_iterator<Iterator>::difference_type n) const {
 				return reverse_iterator(current + n);
 			};
 
-			reverse_iterator& operator-=(difference_type n) {
+			reverse_iterator& operator-=(typename reverse_iterator<Iterator>::difference_type n) {
 				current += n;
 				return *this;
 			};
 
-			reference operator[](difference_type n) const {
+			reference operator[](typename reverse_iterator<Iterator>::difference_type n) const {
 				return current[-n - 1];
 			};
 
