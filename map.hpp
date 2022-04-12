@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/09 04:28:40 by wluong            #+#    #+#             */
-/*   Updated: 2022/03/09 04:47:27 by wluong           ###   ########.fr       */
+/*   Updated: 2022/04/04 23:39:13 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,27 +43,31 @@ namespace ft {
 			typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 		
 		class value_compare : public binary_function<value_type,value_type,bool> {
+			
 			friend class map;
 			
 			protected:
+			
 				Compare comp;
 				value_compare(Compare c) : comp(c) {}
 			
 			public:
+			
 				bool operator()(const value_type& x, const value_type& y) const {
 					return comp(x.first, y.first);
 				}
 		};
 
-		explicit map(const Compare& comp = Compare(),
-		const Allocator& = Allocator());
+		explicit map(const Compare& comp = Compare(), const Allocator& = Allocator());
+
 		template <class InputIterator>
-		map(InputIterator first, InputIterator last,
-		const Compare& comp = Compare(), const Allocator& = Allocator());
+		map(InputIterator first, InputIterator last, const Compare& comp = Compare(), const Allocator& = Allocator());
+
 		map(const map<Key,T,Compare,Allocator>& x);
+
 		~map();
-		map<Key,T,Compare,Allocator>&
-		operator=(const map<Key,T,Compare,Allocator>& x);
+
+		map<Key,T,Compare,Allocator>& operator=(const map<Key,T,Compare,Allocator>& x);
 
 		iterator begin();
 		const_iterator begin() const;

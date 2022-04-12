@@ -1,372 +1,437 @@
-#include "vector.hpp"
+#include <iostream>
+using namespace std;
 
-#ifndef STD
-# define NAMESPACE ft
-#else
-# define NAMESPACE std
-#endif
+struct Node {
+  int data;
+  Node *parent;
+  Node *left;
+  Node *right;
+  int color;
+};
 
-using namespace NAMESPACE;
+typedef Node *NodePtr;
 
-int main()
-{
-	vector<string> JOHN;
-	vector<string> BOB(5, "Hello");
-	cout << "BOB(5, 8) : ";
-	for (size_t i = 0; i < BOB.size(); i++)
-		cout << BOB[i] << ' ';
-	cout << '\n';
-	vector<string> MIKE(BOB);
+class RedBlackTree {
+   private:
+  NodePtr root;	
+  NodePtr TNULL;
 
-	// CTORs
-	cout << "\nCTORS\n";
-	cout << "Empty is empty ? " << std::boolalpha << JOHN.empty() << '\n';
-	cout << "BOB is empty? " << BOB.empty() << '\n';
+  void initializeNULLNode(NodePtr node, NodePtr parent) {
+    node->data = 0;
+    node->parent = parent;
+    node->left = nullptr;
+    node->right = nullptr;
+    node->color = 0;
+  }
 
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
+  // Preorder
+  void preOrderHelper(NodePtr node) {
+    if (node != TNULL) {
+      cout << node->data << " ";
+      preOrderHelper(node->left);
+      preOrderHelper(node->right);
+    }
+  }
 
+  // Inorder
+  void inOrderHelper(NodePtr node) {
+    if (node != TNULL) {
+      inOrderHelper(node->left);
+      cout << node->data << " ";
+      inOrderHelper(node->right);
+    }
+  }
 
-	// RESIZE
-	size_t	bob_resize = 2;
-	cout << "\nRESIZE\n";
-	BOB.resize(bob_resize);
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	if (JOHN.capacity() >= JOHN.size())
-		cout << "Capacity of JOHN is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 53\n";
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	if (BOB.capacity() >= bob_resize)
-		cout << "Capacity of BOB is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 58\n";
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	if (MIKE.capacity() >= MIKE.size())
-		cout << "Capacity of MIKE is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 63\n";
+  // Post order
+  void postOrderHelper(NodePtr node) {
+    if (node != TNULL) {
+      postOrderHelper(node->left);
+      postOrderHelper(node->right);
+      cout << node->data << " ";
+    }
+  }
 
-	size_t	mike_resize = 9;
-	bob_resize = 0;
-	
-	BOB.resize(bob_resize);
-	cout << "BOB is empty now ? " << BOB.empty() << '\n';
-	MIKE.resize(mike_resize, "juste some random string");
-	/*
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	cout << "Capacity of JOHN " << JOHN.capacity() << std::endl;
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	cout << "Capacity of BOB " << BOB.capacity() << std::endl;
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	cout << "Capacity of MIKE " << MIKE.capacity() << std::endl;
-	*/
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	if (JOHN.capacity() >= JOHN.size())
-		cout << "Capacity of JOHN is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 86\n";
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	if (BOB.capacity() >= bob_resize)
-		cout << "Capacity of BOB is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 91\n";
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	if (MIKE.capacity() >= mike_resize)
-		cout << "Capacity of MIKE is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 96\n";
-	for (size_t i = 0; i < MIKE.size(); i++)
-		cout << MIKE[i] << ' ';
-	cout << std::endl;
+  NodePtr searchTreeHelper(NodePtr node, int key) {
+    if (node == TNULL || key == node->data) {
+      return node;
+    }
 
-	// RESERVE
-	cout << "\nRESERVE\n";
+    if (key < node->data) {
+      return searchTreeHelper(node->left, key);
+    }
+    return searchTreeHelper(node->right, key);
+  }
 
-	size_t	john_reserve = 5;
-	size_t	bob_reserve = 3;
-	size_t	mike_reserve = 83;
+  // For balancing the tree after deletion
+  void deleteFix(NodePtr x) {
+    NodePtr s;
+    while (x != root && x->color == 0) {
+      if (x == x->parent->left) {
+        s = x->parent->right;
+        if (s->color == 1) {
+          s->color = 0;
+          x->parent->color = 1;
+          leftRotate(x->parent);
+          s = x->parent->right;
+        }
 
-	JOHN.reserve(john_reserve);
-	BOB.reserve(bob_reserve);
-	MIKE.reserve(mike_reserve);
-	/*
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	cout << "Capacity of JOHN " << JOHN.capacity() << std::endl;
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	cout << "Capacity of BOB " << BOB.capacity() << std::endl;
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	cout << "Capacity of MIKE " << MIKE.capacity() << std::endl;
-	*/
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	if (JOHN.capacity() >= john_reserve)
-		cout << "Capacity of JOHN is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 120\n";
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	if (BOB.capacity() >= bob_reserve)
-		cout << "Capacity of BOB is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 125\n";
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	if (MIKE.capacity() >= mike_reserve)
-		cout << "Capacity of MIKE is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 130\n";
-	for (size_t i = 0; i < MIKE.size(); i++)
-		cout << MIKE[i] << ' ';
-	cout << std::endl;
+        if (s->left->color == 0 && s->right->color == 0) {
+          s->color = 1;
+          x = x->parent;
+        } else {
+          if (s->right->color == 0) {
+            s->left->color = 0;
+            s->color = 1;
+            rightRotate(s);
+            s = x->parent->right;
+          }
 
-	//AT
-	cout << "\nAT\n";
-	try
-	{
-		cout << MIKE.at(2) << '\n';
-		cout << MIKE.at(87) << '\n';
-	}
-	catch (std::out_of_range& oor)
-	{
-		(void)oor;
-		cout << "OOR error caught\n";
-	}
+          s->color = x->parent->color;
+          x->parent->color = 0;
+          s->right->color = 0;
+          leftRotate(x->parent);
+          x = root;
+        }
+      } else {
+        s = x->parent->left;
+        if (s->color == 1) {
+          s->color = 0;
+          x->parent->color = 1;
+          rightRotate(x->parent);
+          s = x->parent->left;
+        }
 
-	// FRONT / BACK
-	cout << "\nFRONT / BACK\n";
-	cout << "front() of MIKE : " << MIKE.front() << '\n';
-	cout << "back() of MIKE : " << MIKE.back() << '\n';
+        if (s->right->color == 0 && s->right->color == 0) {
+          s->color = 1;
+          x = x->parent;
+        } else {
+          if (s->left->color == 0) {
+            s->right->color = 0;
+            s->color = 1;
+            leftRotate(s);
+            s = x->parent->left;
+          }
 
-	//ASSIGN
-	cout << "\nASSIGN\n";
-	BOB.assign(42, "James BOND");
+          s->color = x->parent->color;
+          x->parent->color = 0;
+          s->left->color = 0;
+          rightRotate(x->parent);
+          x = root;
+        }
+      }
+    }
+    x->color = 0;
+  }
 
-	//ASSIGN RANGE
-	cout << "\nASSIGN RANGE\n";
-	vector<string>	assign_range;
-	assign_range.assign(8, "Covfefe");
-	assign_range.assign(BOB.begin() + 1, BOB.end() - 2);
+  void rbTransplant(NodePtr u, NodePtr v) {
+    if (u->parent == nullptr) {
+      root = v;
+    } else if (u == u->parent->left) {
+      u->parent->left = v;
+    } else {
+      u->parent->right = v;
+    }
+    v->parent = u->parent;
+  }
 
-	//EMPTY
-	cout << "\nEMPTY\n";
-	cout << "BOB is empty ? " << BOB.empty() << '\n';
-	cout << "BOB at(41) : " << BOB.at(41) << '\n';
+  void deleteNodeHelper(NodePtr node, int key) {
+    NodePtr z = TNULL;
+    NodePtr x, y;
+    while (node != TNULL) {
+      if (node->data == key) {
+        z = node;
+      }
 
-	//PUSH/POP_BACK
-	cout << "\nPUSH/POP_BACK\n";
-	BOB.push_back("My name is Bond");
-	cout << "last elem of BOB : " << BOB.back() << '\n';
-	BOB.pop_back();
-	cout << "last elem of BOB : " << BOB.back() << '\n';
+      if (node->data <= key) {
+        node = node->right;
+      } else {
+        node = node->left;
+      }
+    }
 
-	//INSERT
-	cout << "\nINSERT\n";
-	vector<string>	insert_in_me;
-	for (size_t i = 0; i < 15; i++)
-		insert_in_me.push_back(ft::to_string(i) + " I love hbaudet\n");
-	cout << "after push_back, before at\n";
-	for (size_t i = 0; i < insert_in_me.size(); i++)
-		cout << insert_in_me.at(i) << ' ';
-	cout << '\n';
+    if (z == TNULL) {
+      cout << "Key not found in the tree" << endl;
+      return;
+    }
 
-	vector<string>::iterator	tmp;
-	tmp = insert_in_me.begin() + 4;
-	insert_in_me.insert(tmp, 8, "Norminet");
-	for (size_t i = 0; i < insert_in_me.size(); i++)
-		cout << insert_in_me.at(i) << ' ';
-	cout << '\n';
+    y = z;
+    int y_original_color = y->color;
+    if (z->left == TNULL) {
+      x = z->right;
+      rbTransplant(z, z->right);
+    } else if (z->right == TNULL) {
+      x = z->left;
+      rbTransplant(z, z->left);
+    } else {
+      y = minimum(z->right);
+      y_original_color = y->color;
+      x = y->right;
+      if (y->parent == z) {
+        x->parent = y;
+      } else {
+        rbTransplant(y, y->right);
+        y->right = z->right;
+        y->right->parent = y;
+      }
 
-	vector<string>::const_iterator const_it(insert_in_me.begin());
-	cout << "Const it : " << std::endl;
-	cout << *const_it << '\n';
-//	*const_it = 89; // Does not compile because it's a const_iterator
+      rbTransplant(z, y);
+      y->left = z->left;
+      y->left->parent = y;
+      y->color = z->color;
+    }
+    delete z;
+    if (y_original_color == 0) {
+      deleteFix(x);
+    }
+  }
 
+  // For balancing the tree after insertion
+  void insertFix(NodePtr k) {
+    NodePtr u;
+    while (k->parent->color == 1) {
+      if (k->parent == k->parent->parent->right) {
+        u = k->parent->parent->left;
+        if (u->color == 1) {
+          u->color = 0;
+          k->parent->color = 0;
+          k->parent->parent->color = 1;
+          k = k->parent->parent;
+        } else {
+          if (k == k->parent->left) {
+            k = k->parent;
+            rightRotate(k);
+          }
+          k->parent->color = 0;
+          k->parent->parent->color = 1;
+          leftRotate(k->parent->parent);
+        }
+      } else {
+        u = k->parent->parent->right;
 
-	//INSERT
-	cout << "\nINSERT\n";
-	vector<string>	std_insert_in_me;
-	for (size_t i = 0; i < 15; i++)
-		std_insert_in_me.push_back(ft::to_string(i) + " 42 ");
-	for (size_t i = 0; i < std_insert_in_me.size(); i++)
-		cout << std_insert_in_me.at(i) << ' ';
-	cout << '\n';
+        if (u->color == 1) {
+          u->color = 0;
+          k->parent->color = 0;
+          k->parent->parent->color = 1;
+          k = k->parent->parent;
+        } else {
+          if (k == k->parent->right) {
+            k = k->parent;
+            leftRotate(k);
+          }
+          k->parent->color = 0;
+          k->parent->parent->color = 1;
+          rightRotate(k->parent->parent);
+        }
+      }
+      if (k == root) {
+        break;
+      }
+    }
+    root->color = 0;
+  }
 
-	vector<string>::iterator	std_tmp;
-	std_tmp = std_insert_in_me.begin() + 4;
-	std_insert_in_me.insert(std_tmp, 8, "Why are you reading this!?");
-	for (size_t i = 0; i < std_insert_in_me.size(); i++)
-		cout << std_insert_in_me.at(i) << ' ';
-	cout << '\n';
+  void printHelper(NodePtr root, string indent, bool last) {
+    if (root != TNULL) {
+      cout << indent;
+      if (last) {
+        cout << "R----";
+        indent += "   ";
+      } else {
+        cout << "L----";
+        indent += "|  ";
+      }
 
+      string sColor = root->color ? "RED" : "BLACK";
+      cout << root->data << "(" << sColor << ")" << endl;
+      printHelper(root->left, indent, false);
+      printHelper(root->right, indent, true);
+    }
+  }
 
-	//INSERT RANGE
-	cout << "\nINSERT RANGE\n";
-	vector<string>	insert_bis;
-	for (size_t i = 0; i < 7; i++)
-		insert_bis.push_back(ft::to_string(3 * i));
-	for (size_t i = 0; i < insert_bis.size(); i++)
-		cout << insert_bis[i] << ' ';
-	cout << '\n';
+   public:
+  RedBlackTree() {
+    TNULL = new Node;
+    TNULL->color = 0;
+    TNULL->left = nullptr;
+    TNULL->right = nullptr;
+    root = TNULL;
+  }
 
-	insert_bis.insert(insert_bis.begin() + 5, insert_in_me.begin(), insert_in_me.end());
-	for (size_t i = 0; i < insert_bis.size(); i++)
-		cout << insert_bis[i] << ' ';
-	cout << '\n';
+  void preorder() {
+    preOrderHelper(this->root);
+  }
 
+  void inorder() {
+    inOrderHelper(this->root);
+  }
 
-	//ERASE
-	cout << "\nERASE\n";
-	vector<string>	erase_in_me;
-	for (size_t i = 0; i < 15; i++)
-		erase_in_me.push_back(ft::to_string(2 * i));
-	for (size_t i = 0; i < erase_in_me.size(); i++)
-	{
-//		if (erase_in_me[i] < 10)
-//			cout << ' ';
-		cout << erase_in_me.at(i) << ' ';
-	}
-	cout << '\n';
+  void postorder() {
+    postOrderHelper(this->root);
+  }
 
-	erase_in_me.erase(erase_in_me.begin() + 7);
-	for (size_t i = 0; i < erase_in_me.size(); i++)
-	{
-//		if (erase_in_me[i] < 10)
-//			cout << ' ';
-		cout << erase_in_me.at(i) << ' ';
-	}
-	cout << '\n';
+  NodePtr searchTree(int k) {
+    return searchTreeHelper(this->root, k);
+  }
 
-	erase_in_me.erase(erase_in_me.begin() + 2, erase_in_me.begin() + 6);
-	for (size_t i = 0; i < erase_in_me.size(); i++)
-	{
-//		if (erase_in_me[i] < 10)
-//			cout << ' ';
-		cout << erase_in_me.at(i) << ' ';
-	}
-	cout << '\n';
+  NodePtr minimum(NodePtr node) {
+    while (node->left != TNULL) {
+      node = node->left;
+    }
+    return node;
+  }
 
-	//SWAP
-	cout << "\nSWAP\n";
-	BOB.swap(MIKE);
-	/*
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	cout << "Capacity of BOB " << BOB.capacity() << std::endl;
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	cout << "Capacity of MIKE " << MIKE.capacity() << std::endl;
-	*/
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	if (JOHN.capacity() >= JOHN.size())
-		cout << "Capacity of JOHN is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 272\n";
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	if (BOB.capacity() >= BOB.size())
-		cout << "Capacity of BOB is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 277\n";
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	if (MIKE.capacity() >= MIKE.size())
-		cout << "Capacity of MIKE is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 282\n";
-	for (size_t i = 0; i < MIKE.size(); i++)
-		cout << MIKE[i] << ' ';
-	cout << std::endl;
+  NodePtr maximum(NodePtr node) {
+    while (node->right != TNULL) {
+      node = node->right;
+    }
+    return node;
+  }
 
-	MIKE.swap(JOHN);
-	/*
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	cout << "Capacity of JOHN " << JOHN.capacity() << std::endl;
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	cout << "Capacity of MIKE " << MIKE.capacity() << std::endl;
-	*/
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	if (JOHN.capacity() >= JOHN.size())
-		cout << "Capacity of JOHN is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 298\n";
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	if (BOB.capacity() >= BOB.size())
-		cout << "Capacity of BOB is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 303\n";
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	if (MIKE.capacity() >= MIKE.size())
-		cout << "Capacity of MIKE is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 308\n";
-	for (size_t i = 0; i < MIKE.size(); i++)
-		cout << MIKE[i] << ' ';
-	cout << std::endl;
+  NodePtr successor(NodePtr x) {
+    if (x->right != TNULL) {
+      return minimum(x->right);
+    }
 
-	//CLEAR
-	cout << "\nCLEAR\n";
-	JOHN.clear();
-	MIKE.clear();
-	/*
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	cout << "Capacity of JOHN " << JOHN.capacity() << std::endl;
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	cout << "Capacity of MIKE " << MIKE.capacity() << std::endl;
-	*/
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	if (JOHN.capacity() >= JOHN.size())
-		cout << "Capacity of JOHN is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 327\n";
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	if (BOB.capacity() >= BOB.size())
-		cout << "Capacity of BOB is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 332\n";
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	if (MIKE.capacity() >= MIKE.size())
-		cout << "Capacity of MIKE is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 337\n";
-	for (size_t i = 0; i < MIKE.size(); i++)
-		cout << MIKE[i] << ' ';
-	cout << std::endl;
+    NodePtr y = x->parent;
+    while (y != TNULL && x == y->right) {
+      x = y;
+      y = y->parent;
+    }
+    return y;
+  }
 
-	//NON MEMBER Functions
-	cout << "\nNON MEMBER functions\n";
-	swap(BOB, MIKE);
-	/*
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	cout << "Capacity of BOB " << BOB.capacity() << std::endl;
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	cout << "Capacity of MIKE " << MIKE.capacity() << std::endl;
-	*/
-	cout << "Size of JOHN " << JOHN.size() << std::endl;
-	if (JOHN.capacity() >= JOHN.size())
-		cout << "Capacity of JOHN is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 355\n";
-	cout << "Size of BOB " << BOB.size() << std::endl;
-	if (BOB.capacity() >= BOB.size())
-		cout << "Capacity of BOB is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 360\n";
-	cout << "Size of MIKE " << MIKE.size() << std::endl;
-	if (MIKE.capacity() >= MIKE.size())
-		cout << "Capacity of MIKE is sufficient\n";
-	else
-		std::cerr << "THERE IS A PROBLEM ON LINE 365\n";
-	for (size_t i = 0; i < MIKE.size(); i++)
-		cout << MIKE[i] << ' ';
-	cout << std::endl;
-	
-	//RELATIONAL OPERATORS
-	cout << "\nRELATIONAL OPERATORS\n";
-	vector<string> MIKE_2(MIKE);
-	cout << "MIKE and BOB are equal ? " << (MIKE == BOB) << '\n';
-	cout << "MIKE and MIKE_2 are equal ? " << (MIKE == MIKE_2) << '\n';
+  NodePtr predecessor(NodePtr x) {
+    if (x->left != TNULL) {
+      return maximum(x->left);
+    }
 
-	vector<string> real;
-	real.assign(5, "foo");
-	for (vector<string>::iterator it = real.begin(); it != real.end(); it++)
-		cout << *it << " ";
-	cout << '\n';
+    NodePtr y = x->parent;
+    while (y != TNULL && x == y->left) {
+      x = y;
+      y = y->parent;
+    }
 
-	cout << std::endl;
-	return (0);
+    return y;
+  }
+
+  void leftRotate(NodePtr x) {
+    NodePtr y = x->right;
+    x->right = y->left;
+    if (y->left != TNULL) {
+      y->left->parent = x;
+    }
+    y->parent = x->parent;
+    if (x->parent == nullptr) {
+      this->root = y;
+    } else if (x == x->parent->left) {
+      x->parent->left = y;
+    } else {
+      x->parent->right = y;
+    }
+    y->left = x;
+    x->parent = y;
+  }
+
+  void rightRotate(NodePtr x) {
+    NodePtr y = x->left;
+    x->left = y->right;
+    if (y->right != TNULL) {
+      y->right->parent = x;
+    }
+    y->parent = x->parent;
+    if (x->parent == nullptr) {
+      this->root = y;
+    } else if (x == x->parent->right) {
+      x->parent->right = y;
+    } else {
+      x->parent->left = y;
+    }
+    y->right = x;
+    x->parent = y;
+  }
+
+  // Inserting a node
+  void insert(int key) {
+    NodePtr node = new Node;
+    node->parent = nullptr;
+    node->data = key;
+    node->left = TNULL;
+    node->right = TNULL;
+    node->color = 1;
+
+    NodePtr y = nullptr;
+    NodePtr x = this->root;
+
+    while (x != TNULL) {
+      y = x;
+      if (node->data < x->data) {
+        x = x->left;
+      } 
+	  else {
+        x = x->right;
+      }
+    }
+
+    node->parent = y;
+    if (y == nullptr) {
+      root = node;
+    } else if (node->data < y->data) {
+      y->left = node;
+    } else {
+      y->right = node;
+    }
+
+    if (node->parent == nullptr) {
+      node->color = 0;
+      return;
+    }
+
+    if (node->parent->parent == nullptr) {
+      return;
+    }
+
+    insertFix(node);
+  }
+
+  NodePtr getRoot() {
+    return this->root;
+  }
+
+  void deleteNode(int data) {
+    deleteNodeHelper(this->root, data);
+  }
+
+  void printTree() {
+    if (root) {
+      printHelper(this->root, "", true);
+    }
+  }
+};
+
+int main() {
+  RedBlackTree bst;
+ 	bst.insert(17);
+	bst.insert(12);
+	bst.insert(96);
+	bst.insert(1);
+	bst.insert(3);
+	bst.insert(42);
+	bst.insert(37);
+	bst.insert(25);
+	bst.insert(15);
+//   bst.insert(55);
+//   bst.insert(40);
+//   bst.insert(65);
+//   bst.insert(60);
+//   bst.insert(75);
+//   bst.insert(57);
+//   bst.insert(62);
+//   bst.insert(77);
+
+  bst.inorder();
+  bst.printTree();
+  cout << endl
+     << "After deleting" << endl;
+  bst.deleteNode(6);
+  bst.printTree();
 }
