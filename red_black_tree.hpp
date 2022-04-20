@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/09 07:19:59 by wluong            #+#    #+#             */
-/*   Updated: 2022/04/12 06:56:49 by wluong           ###   ########.fr       */
+/*   Updated: 2022/04/19 06:02:11 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,13 @@
 # include <algorithm>
 # include <memory>
 # include <cstddef>
+# include <iomanip>
+# include <iostream>
+# include <utility>
+# include <string>
+# include <sstream>
+# include "enable_if.hpp"
+# include "is_integral.hpp"
 
 namespace ft {
 
@@ -27,20 +34,20 @@ namespace ft {
 ****************************************************************************
 ***************************************************************************/
 
-	template < class T, class Node = node<T>, class Allocator = std::allocator<Node>>
+	template < class T, class Compare, class Node = node<T>, class Allocator = std::allocator<Node> >
 	class RedBlackTree {
 
 		public:
 		
 			typedef T										value_type;
-			// typedef node<T>									Node;
+			typedef Compare									compare;
 			typedef typename Allocator::reference			reference;
 			typedef typename Allocator::const_reference		const_reference;
 			typedef typename Allocator::pointer				pointer;
 			typedef typename Allocator::const_pointer		const_pointer;
 			typedef typename Allocator::size_type			size_type;
 			typedef ft::RBTIterator<T>						iterator;
-			typedef ft::RBTIterator<const T>				const_iterator;
+			typedef ft::const_RBTIterator<T>				const_iterator;
 			typedef ft::reverse_iterator<iterator> 			reverse_iterator;
 			typedef ft::reverse_iterator<const_iterator> 	const_reverse_iterator;
 		
@@ -52,7 +59,7 @@ namespace ft {
 ****************************************************************************
 ***************************************************************************/
 
-		RedBlackTree( const Allocator& alloc = Allocator()) : _alloc(alloc), _size(0) {
+		RedBlackTree( const compare& cmp = compare(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _size(0), _cmp(cmp) {
 			nil = _alloc.allocate(1);
 			_alloc.construct(nil, Node());
 			nil->_color = black;
@@ -62,7 +69,10 @@ namespace ft {
 			root = nil;
 		};
 		
-		~RedBlackTree() {};
+		~RedBlackTree() {
+			clear();
+			destroy_node(nil);
+		};
 
 /***************************************************************************
 ****************************************************************************
@@ -70,11 +80,16 @@ namespace ft {
 ****************************************************************************
 ***************************************************************************/
 
-		void	_delete( Node *z ) {
+		size_type	erase( const value_type& del ) {
+			iterator it = find(del);
+			Node *z = it.get_node();
 			Node *y;
 			Node *x;
 			y = z;
 			Color original = y->_color;
+			if (z == nil) {
+				return 0;
+			}
 			if (z->_left == nil) {
 				x = z->_right;
 				transplant(z, z->_right);
@@ -100,21 +115,27 @@ namespace ft {
 				y->_left->_parent = y;
 				y->_color = z->_color;
 			}
+			destroy_node(z);
 			if (original == black)
 				_deleteFixup(x);
-			destroy_node(z);
+			return 1;
 		};
 
-		void	insert(const value_type& x) {
+		Node	*insert(const value_type& x) {
 
+			
+
+			iterator it = find(x);
+			if (it.get_node() != nil) {
+				return nil;
+			}
 			Node *z = new_node(x);
 			Node *y = nil;
 			Node *u = root;
-
 			if (root == nil) {
 				z->_color = black;
 				root = z;
-				return ;
+				return z;
 			}
 			while (u != nil) {
 				y = u;
@@ -134,6 +155,7 @@ namespace ft {
 				y->_right = z;
 			}
 			insert_fixup(z);
+			return z;
 		};
 
 
@@ -153,7 +175,7 @@ namespace ft {
 		};
 
 		const_iterator begin() const {
-				Node *tmp = root;
+			Node *tmp = root;
 			while (tmp->_left != nil) {
 				tmp = tmp->_left;
 			}
@@ -164,25 +186,25 @@ namespace ft {
 			return iterator(nil, nil);
 		};
 
-		// const_iterator end() const {
-		// 	return const_iterator(nil);
-		// };
+		const_iterator end() const {
+			return const_iterator(nil, nil);
+		};
 
-		// reverse_iterator rbegin() {
+		reverse_iterator rbegin() {
+			return reverse_iterator(end());
+		};
 
-		// };
+		const_reverse_iterator rbegin() const {
+			return const_reverse_iterator(rend());
+		};
 
-		// const_reverse_iterator rbegin() const {
+		reverse_iterator rend() {
+			return reverse_iterator(begin());
+		};
 
-		// };
-
-		// reverse_iterator rend() {
-
-		// };
-
-		// const_reverse_iterator rend() const {
-
-		// };
+		const_reverse_iterator rend() const {
+			return const_reverse_iterator(rend());
+		};
 
 
 /***************************************************************************
@@ -191,7 +213,9 @@ namespace ft {
 ****************************************************************************
 ***************************************************************************/
 
-		Node *	getRoot() { return root; };
+		Node * getRoot() { return root; };
+
+		Node * getNil() { return nil; };
 
 
 		void _InOrder(Node *z)
@@ -203,69 +227,105 @@ namespace ft {
 				_InOrder(z->_right);
 				}
 		}
+
 /***************************************************************************
 ****************************************************************************
 *************					MAP FONCTIONS					************
 ***************************************************************************/
-		// pair<iterator, bool> insert(const value_type& x);
 
-		// RBT
-		// iterator insert(iterator position, const value_type& x);
-
-		// RBT
-		// template <class InputIterator>
-		// void insert(InputIterator first, InputIterator last);
-
-
-		// MAP
-		// void erase(iterator position);
+		void erase(iterator first, iterator last) {
+			for (; first != last; first++) {
+				iterator tmp = first;
+				erase(*tmp);
+			}
+		};
 
 
-		// MAP
-		// size_type erase(const key_type& x);
+		void clear() {
+			Node *tmp = root;
+			while (tmp != nil) {
+				erase(tmp->_data);
+				tmp = root;
+			}
+		};
 
-		// RBT
-		// void erase(iterator first, iterator last);
+		iterator find(const value_type& x) {
 
-		// MAP
-		// void swap(map<Key,T,Compare,Allocator>&);
+			// iterator it = iterator(root, nil);
+			// return _recursive_find(it, x);
+			Node *tmp = root;
+			if (tmp != nil) {
+				while (tmp != nil) {
+					if (tmp->_data == x)
+						return iterator(tmp, nil);
+					else if (tmp->_data > x) {
+						tmp = tmp->_left;
+					}
+					else {
+						tmp = tmp->_right;
+					}
+				}
+			}
+			return end();
+		};
 
-
-		// RBT
-		// void clear() {
-			
+		// const_iterator find(const value_type& x) const {
+		// 	const_iterator it = const_iterator(root, nil);
+		// 	return _recursive_find(it, x);
 		// };
 
-		// MAP
-		// key_compare key_comp() const;
+		bool empty() const {
+			return _size == 0 ? 0 : 1;
+		};
 
+		size_type	size(void) const { return _size; };
 
-		// MAP
-		// value_compare value_comp() const;
+		size_type max_size() const { return _alloc.max_size(); } ;
 
-		// RBT
-		// iterator find(const key_type& x) {
-		// 	Node *tmp = root;
-		// 	if (tmp != nil) {
-		// 		while (tmp != nil) {
-		// 			if (tmp->_data)
-		// 		}
-		// 	}
+		size_type count(const value_type& x) const {
+			iterator it = find(x);
+			if (it == end()) {
+				return 0;
+			}
+			return 1;
+		};
+
+		// iterator lower_bound(const value_type& x) {
+		// 	iterator it = find(x);
+		// 	it++;
+		// 	return (it);
 		// };
 
+		// const_iterator lower_bound(const value_type& x) const {
+		// 	const_iterator it = find(x);
+		// 	it++;
+		// 	return (it);
+		// };
+		
+		// iterator upper_bound(const value_type& x) {
+		// 	iterator it = find(x);
+		// 	it--;
+		// 	return (it);
+		// };
+		
+		// const_iterator upper_bound(const value_type& x) const {
+		// 	const_iterator it = find(x);
+		// 	it--;
+		// 	return (it);
+		// };
 
-		/* MAP */
-		// const_iterator find(const key_type& x) const;
+		void	print(void)
+		{
+			std::stringstream	buffer;
 
-		// size_type count(const key_type& x) const;
+			std::cout << "size: " << this->size() << std::endl;
+			if (root != nil)
+			{
+				_print(root, buffer, true, "");
+				std::cout << buffer.str();
+			}
+		}
 
-		// iterator lower_bound(const key_type& x);
-
-		// pair<iterator,iterator>
-		// equal_range(const key_type& x);
-
-		// pair<const_iterator,const_iterator>
-		// equal_range(const key_type& x) const;
 
 		private:
 		
@@ -276,56 +336,26 @@ namespace ft {
 ***************************************************************************/
 
 		void	left_rotate(Node *x) {
-			Node *y;
-			y = x->_right;
+			Node *y = x->_right;
+			x->_right = y->_left;
 			if (y->_left != nil) {
-				y->_left = x;
+				y->_left->_parent = x;
 			}
 			y->_parent = x->_parent;
 			if (x->_parent == nil) {
+				root = y;
+			}
+			else if (x == x->_parent->_left) {
+				x->_parent->_left = y;
+			}
+			else {
 				x->_parent->_right = y;
 			}
 			y->_left = x;
 			x->_parent = y;
-			
-			// Node *y = x->_right;
-			// x->_right = y->_left;
-			// if (y->_left != nil) {
-			// 	y->_left->_parent = x;
-			// }
-			// y->_parent = x->_parent;
-			// if (x->_parent == nil) {
-			// 	root = y;
-			// }
-			// else if (x == x->_parent->_left) {
-			// 	x->_parent->_left = y;
-			// }
-			// else {
-			// 	x->_parent->_right = y;
-			// }
-			// y->_left = x;
-			// x->_parent = y;
 		};
 
 		void	right_rotate(Node *x) {
-			// Node *y;
-			// y = x->_left;
-			// if (y->_right != nil) {
-			// 	y->_right = x;
-			// }
-			// y->_parent = x->_parent;
-			// if (x->_parent == nil) {
-			// 	root = y;
-			// }
-			// else if (x == x->_parent->_right) {
-			// 	x->_parent->_right = y;
-			// }
-			// else {
-			// 	x->_parent->_left = y;
-			// }
-			// y->_right = x;
-			// x->_parent = y;
-			
 			Node *y = x->_left;
 			x->_left = y->_right;
 			if (y->_right != nil) {
@@ -370,8 +400,8 @@ namespace ft {
 				else {
 					y = z->_parent->_parent->_right;
 					if (y->_color == red) {
-						z->_parent->_color = black;
 						y->_color = black;
+						z->_parent->_color = black;
 						z->_parent->_parent->_color = red;
 						z = z->_parent->_parent;
 					}
@@ -382,7 +412,7 @@ namespace ft {
 						}
 						z->_parent->_color = black;
 						z->_parent->_parent->_color = red;
-						left_rotate(z->_parent->_parent);
+						right_rotate(z->_parent->_parent);
 					}
 				}
 				if (z == root)
@@ -466,8 +496,78 @@ namespace ft {
 				}
 			}
 			x->_color = black;
-		}
+		};
 
+		void	_clear_helper( const value_type& del ) {
+			iterator it = find(del);
+			Node *z = it.get_node();
+			Node *y;
+			Node *x;
+			y = z;
+			Color original = y->_color;
+			if (z == nil) {
+				return ;
+			}
+			if (z->_left == nil) {
+				x = z->_right;
+				transplant(z, z->_right);
+			}
+			else if (z->_right == nil) {
+				x = z->_left;
+				transplant(z, z->_left);
+			}
+			else {
+				y = minimum(z->_right);
+				original = y->_color;
+				x = y->_right;
+				if (y->_parent == z) {
+					x->_parent = y;
+				}
+				else {
+					transplant(y, y->_right);
+					y->_right = z->_right;
+					y->_right->_parent = y;
+				}
+				transplant(z, y);
+				y->_left = z->_left;
+				y->_left->_parent = y;
+				y->_color = z->_color;
+			}
+			destroy_node(z);
+		};
+
+		iterator _recursive_find(iterator it, const value_type & x) {
+			if (!_cmp(*it, x) && !_cmp(x, *it))
+				return it;
+			if (it != end() && !_cmp(*it, x))
+				return _recursive_find(it--, x);
+			if (it != end() && !_cmp(x, *it))
+				return _recursive_find(it++, x);
+			return end();
+		};
+
+		// const_iterator _recursive_find(const_iterator it, const value_type & x) {
+		// 	if (!_cmp(*it, x) && !_cmp(x, *it))
+		// 		return it;
+		// 	if (it != end() && !_cmp(*it, x))
+		// 		return _recursive_find(it++, x);
+		// 	if (it != end() && !_cmp(x, *it))
+		// 		return _recursive_find(it--, x);
+		// 	if (it == end())
+		// 		return end();
+		// };
+
+		void	_print(Node * node, std::stringstream &buffer, bool isTail, std::string prefix)
+		{
+			if (node->_right != nil)
+				_print(node->_right, buffer, false, std::string(prefix).append(isTail ? "│   " : "    "));
+			buffer << prefix << (isTail ? "└── " : "┌── ");
+			if (node->_color == red)
+				buffer << "\033[31m";
+			buffer << node->_data << "\033[0m" << std::endl;
+			if (node->_left != nil)
+				_print(node->_left, buffer, true, std::string(prefix).append(isTail ? "    " : "│   "));
+		};
 
 /***************************************************************************
 ****************************************************************************
@@ -476,6 +576,7 @@ namespace ft {
 ***************************************************************************/
 
 		Node	*new_node(const value_type& x) {
+			
 			Node *newNode;
 	
 			newNode = _alloc.allocate(1);
@@ -497,6 +598,7 @@ namespace ft {
 		Node			*nil;
 		Allocator		_alloc;
 		size_type		_size;
+		compare			_cmp;
 
 	};
 

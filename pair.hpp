@@ -6,12 +6,15 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/15 02:22:47 by wluong            #+#    #+#             */
-/*   Updated: 2022/04/07 01:54:37 by wluong           ###   ########.fr       */
+/*   Updated: 2022/04/19 05:33:23 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PAIR_HPP
 # define PAIR_HPP
+
+# include <iostream>
+# include <memory>
 
 namespace ft {
 
@@ -25,22 +28,19 @@ namespace ft {
 		first_type	first;
 		second_type	second;
 	
-		pair() {};
+		pair() : first(), second() {};
 	
 		template<class U, class V>
-		pair (const pair< U, V >& pr) {
-			this->first = pr->first;
-			this->second = pr->second;
+		pair(const pair< U, V >& pr) : first(pr.first), second(pr.second) {
 		};
 		
-		pair (const first_type& a, const second_type& b) {
-			this->first = a;
-			this->second = b;
-		};
+		~pair() {};
+
+		pair(const first_type& a, const second_type& b) : first(a), second(b) {};
 
 		pair& operator= (const pair& pr) {
-			this->first = pr->first;
-			this->second = pr->second;
+			first = pr.first;
+			second = pr.second;
 			return *this;
 		};
 	};

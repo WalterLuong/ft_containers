@@ -418,7 +418,6 @@ int main() {
 	bst.insert(42);
 	bst.insert(37);
 	bst.insert(25);
-	bst.insert(15);
 //   bst.insert(55);
 //   bst.insert(40);
 //   bst.insert(65);
@@ -429,9 +428,15 @@ int main() {
 //   bst.insert(77);
 
   bst.inorder();
+  cout << endl;
+  bst.postorder();
+  cout << endl;
+  bst.preorder();
+  cout << endl;
   bst.printTree();
   cout << endl
      << "After deleting" << endl;
-  bst.deleteNode(6);
+  bst.deleteNode(42);
+  bst.deleteNode(17);
   bst.printTree();
 }
