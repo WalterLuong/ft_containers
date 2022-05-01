@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/09 07:19:59 by wluong            #+#    #+#             */
-/*   Updated: 2022/04/19 06:02:11 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/01 04:39:59 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,9 @@ namespace ft {
 			nil = _alloc.allocate(1);
 			_alloc.construct(nil, Node());
 			nil->_color = black;
-			nil->_left = nil;
-			nil->_right = nil;
-			nil->_parent = nil;
+			nil->_left = NULL;
+			nil->_right = NULL;
+			nil->_parent = NULL;
 			root = nil;
 		};
 		
@@ -115,15 +115,13 @@ namespace ft {
 				y->_left->_parent = y;
 				y->_color = z->_color;
 			}
-			destroy_node(z);
 			if (original == black)
 				_deleteFixup(x);
+			destroy_node(z);
 			return 1;
 		};
 
 		Node	*insert(const value_type& x) {
-
-			
 
 			iterator it = find(x);
 			if (it.get_node() != nil) {
@@ -233,18 +231,23 @@ namespace ft {
 *************					MAP FONCTIONS					************
 ***************************************************************************/
 
-		void erase(iterator first, iterator last) {
-			for (; first != last; first++) {
-				iterator tmp = first;
-				erase(*tmp);
-			}
-		};
+		// void erase(iterator first, iterator last) {
+		// 	iterator	it;
+		// 	it = this->begin();
+		// 	while (it != first) {
+		// 		it++;
+		// 	}
+		// 	for (; first != last; first++) {
+		// 		erase(*it);
+		// 		it++;
+		// 	}
+		// };
 
 
 		void clear() {
 			Node *tmp = root;
 			while (tmp != nil) {
-				erase(tmp->_data);
+				_clear_helper(tmp->_data);
 				tmp = root;
 			}
 		};
@@ -269,13 +272,30 @@ namespace ft {
 			return end();
 		};
 
+		const_iterator find(const value_type& x) const {
+			Node *tmp = root;
+			if (tmp != nil) {
+				while (tmp != nil) {
+					if (tmp->_data == x)
+						return const_iterator(tmp, nil);
+					else if (tmp->_data > x) {
+						tmp = tmp->_left;
+					}
+					else {
+						tmp = tmp->_right;
+					}
+				}
+			}
+			return end();
+		};
+
 		// const_iterator find(const value_type& x) const {
 		// 	const_iterator it = const_iterator(root, nil);
 		// 	return _recursive_find(it, x);
 		// };
 
 		bool empty() const {
-			return _size == 0 ? 0 : 1;
+			return _size == 0 ? 1 : 0;
 		};
 
 		size_type	size(void) const { return _size; };
@@ -283,36 +303,42 @@ namespace ft {
 		size_type max_size() const { return _alloc.max_size(); } ;
 
 		size_type count(const value_type& x) const {
-			iterator it = find(x);
+			const_iterator it = find(x);
 			if (it == end()) {
 				return 0;
 			}
 			return 1;
 		};
 
-		// iterator lower_bound(const value_type& x) {
-		// 	iterator it = find(x);
-		// 	it++;
-		// 	return (it);
-		// };
+		iterator lower_bound(const value_type& x) {
+			iterator it = find(x);
+			if (it.get_node() == nil)
+				return begin();
+			return it;
+		};
 
-		// const_iterator lower_bound(const value_type& x) const {
-		// 	const_iterator it = find(x);
-		// 	it++;
-		// 	return (it);
-		// };
+		const_iterator lower_bound(const value_type& x) const {
+			const_iterator it = find(x);
+			if (it.get_node() == nil)
+				return begin();
+			return (it);
+		};
 		
-		// iterator upper_bound(const value_type& x) {
-		// 	iterator it = find(x);
-		// 	it--;
-		// 	return (it);
-		// };
+		iterator upper_bound(const value_type& x) {
+			iterator it = find(x);
+			if (it == end())
+				return iterator(root, nil);
+			it++;
+			return (it);
+		};
 		
-		// const_iterator upper_bound(const value_type& x) const {
-		// 	const_iterator it = find(x);
-		// 	it--;
-		// 	return (it);
-		// };
+		const_iterator upper_bound(const value_type& x) const {
+			const_iterator it = find(x);
+			if (it == end())
+				return const_iterator(root, nil);
+			it++;
+			return (it);
+		};
 
 		void	print(void)
 		{
@@ -326,6 +352,13 @@ namespace ft {
 			}
 		}
 
+
+		void swap(RedBlackTree<Compare, Node, Allocator>& other) {
+			std::swap(root, other.root);
+			std::swap(nil, other.nil);
+			std::swap(_cmp, other._cmp);
+			std::swap(_size, other._size);
+		}
 
 		private:
 		

@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/04 23:54:04 by wluong            #+#    #+#             */
-/*   Updated: 2022/04/19 05:35:56 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/01 04:49:09 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,11 @@ namespace	ft {
 			~node() {};
 
 			node&	operator=(const node & n) {
-				this->_left = n->_left;
-				this->_right = n->_right;
-				this->_parent = n->_parent;
-				this->_data = n->_data;
-				this->_color = n->_color;
+				this->_left = n._left;
+				this->_right = n._right;
+				this->_parent = n._parent;
+				this->_data = n._data;
+				this->_color = n._color;
 			};
 
 			node<T>		*_left;
@@ -63,7 +63,7 @@ namespace	ft {
 
 			RBTIterator() : _pnode(), nil() {};
 
-			RBTIterator( Node* n, Node *nill ) : _pnode(n), nil(nill) {};
+			RBTIterator( Node* n, Node *nill) : _pnode(n), nil(nill){};
 			
 			RBTIterator(const RBTIterator& other) : _pnode(other._pnode), nil(other.nil) {};
 
@@ -78,10 +78,6 @@ namespace	ft {
 				this->_node_root = s.get_nil();
 				return *this;
 			 }
-
-				// operator RBTIterator<const value_type()>() const {
-				// 	return const_RBTIterator<value_type>(_pnode, nil);
-				// };
 
 			reference operator*() { return _pnode->_data; };
 			
@@ -136,11 +132,11 @@ namespace	ft {
 				}
 				else {
 					Node* tmp = _pnode->_parent;
-					while (_pnode == tmp->_right) {
+					while (_pnode == tmp->_right && tmp != nil) {
 						_pnode = tmp;
 						tmp = tmp->_parent;
 					}
-					if (_pnode->_left != tmp)
+					if (_pnode->_left != tmp && tmp != nil)
 						_pnode = tmp;
 				}
 			}
@@ -156,7 +152,7 @@ namespace	ft {
 				}
 				else {
 					Node* parent = _pnode->_parent;
-					if (_pnode == parent->_left) {
+					if (_pnode == parent->_left && parent->_parent != nil) {
 						_pnode = parent;
 						parent = parent->_parent;
 					}
@@ -166,6 +162,7 @@ namespace	ft {
 
 			Node	*_pnode;
 			Node	*nil;
+			// Node	*root;
 			
 	};
 
@@ -257,7 +254,7 @@ namespace	ft {
 				}
 				else {
 					Node* tmp = _pnode->_parent;
-					while (_pnode == tmp->_right) {
+					while (_pnode == tmp->_right && tmp != nil) {
 						_pnode = tmp;
 						tmp = tmp->_parent;
 					}
@@ -277,7 +274,7 @@ namespace	ft {
 				}
 				else {
 					Node* parent = _pnode->_parent;
-					if (_pnode == parent->_left) {
+					if (_pnode == parent->_left && parent->_parent != nil) {
 						_pnode = parent;
 						parent = parent->_parent;
 					}

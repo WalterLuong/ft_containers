@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/09 04:28:40 by wluong            #+#    #+#             */
-/*   Updated: 2022/04/19 06:02:19 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/01 04:08:39 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ namespace ft {
 				bool operator()(const value_type& x, const value_type& y) const {
 					return comp(x.first, y.first);
 				}
+
+				value_compare &		operator=(value_compare const &) { return *this; };
 		};
 
 /***************************************************************************
@@ -153,12 +155,12 @@ namespace ft {
 		template <class InputIterator>
 		void insert(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL) {
 			for (; first != last; first++) {
-				rbt.insert(*first);
+				insert(*first);
 			}
 		};
 
 		const_iterator find(const key_type& x) const {
-			rbt.find(ft::make_pair(x, T()));
+			return rbt.find(ft::make_pair(x, T()));
 		};
 		
 /***************************************************************************
@@ -176,8 +178,10 @@ namespace ft {
 		};
 		
 		void erase(iterator first, iterator last) {
-			for (; first != last; first++) {
-				erase(first);
+			while (first != last) {
+				iterator it = first;
+				this->erase(it);
+				first++;
 			}
 		};
 		
@@ -185,7 +189,11 @@ namespace ft {
 			rbt.clear();
 		};
 		
-		void swap(map<Key,T,Compare,Allocator>&);
+		// void swap(map<Key,T,Compare,Allocator>& other) {
+
+		// 	rbt.swap(other.rbt);
+		// 	std::swap(_cmp, other._cmp);
+		// };
 
 /***************************************************************************
 ****************************************************************************
@@ -257,7 +265,15 @@ namespace ft {
 	};
 
 	template <class Key, class T, class Compare, class Allocator>
-	bool operator==(const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y);
+	bool operator==(const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y) {
+			if (x.size() != y.size())
+			return false;
+		for (size_t j = 0; j < x.size(); j++) {
+			if (x[j] != y[j])
+				return false;
+		}
+		return true;
+	};
 
 	template <class Key, class T, class Compare, class Allocator>
 	bool operator< (const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y) {
@@ -265,7 +281,9 @@ namespace ft {
 	};
 
 	template <class Key, class T, class Compare, class Allocator>
-	bool operator!=(const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y);
+	bool operator!=(const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y) {
+		return (!(x == y));
+	};
 
 	template <class Key, class T, class Compare, class Allocator>
 	bool operator> (const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y) {
