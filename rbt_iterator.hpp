@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/04 23:54:04 by wluong            #+#    #+#             */
-/*   Updated: 2022/05/01 04:49:09 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/01 14:59:40 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,18 +132,18 @@ namespace	ft {
 				}
 				else {
 					Node* tmp = _pnode->_parent;
-					while (_pnode == tmp->_right && tmp != nil) {
+					while (tmp != nil && _pnode == tmp->_right) {
 						_pnode = tmp;
 						tmp = tmp->_parent;
 					}
-					if (_pnode->_left != tmp && tmp != nil)
-						_pnode = tmp;
+//					if (_pnode->_left != tmp)
+//						_pnode = tmp;
 				}
 			}
 
 			void Decrement() {
-				if (_pnode->_parent->_parent == _pnode && _pnode->_color == red)
-					_pnode = _pnode->_right;
+		//		if (_pnode->_parent->_parent == _pnode && _pnode->_color == red)
+		//			_pnode = _pnode->_right;
 				if (_pnode->_left != nil) {
 					_pnode = _pnode->_left;
 					while (_pnode->_right != nil) {
@@ -152,17 +152,16 @@ namespace	ft {
 				}
 				else {
 					Node* parent = _pnode->_parent;
-					if (_pnode == parent->_left && parent->_parent != nil) {
+					while (parent != nil && _pnode == parent->_left) {
 						_pnode = parent;
 						parent = parent->_parent;
 					}
-					_pnode = parent;
+				//	_pnode = parent;
 				}
 			}
 
 			Node	*_pnode;
 			Node	*nil;
-			// Node	*root;
 			
 	};
 
@@ -197,9 +196,6 @@ namespace	ft {
 				return *this;
 			 }
 
-				// operator const_RBTIterator<const value_type()>() const {
-				// 	return RBTIterator<const value_type>(_pnode, nil);
-				// };
 
 			reference operator*() { return _pnode->_data; };
 			

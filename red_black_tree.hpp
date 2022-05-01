@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/09 07:19:59 by wluong            #+#    #+#             */
-/*   Updated: 2022/05/01 04:39:59 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/01 14:44:05 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,9 @@ namespace ft {
 			nil = _alloc.allocate(1);
 			_alloc.construct(nil, Node());
 			nil->_color = black;
-			nil->_left = NULL;
-			nil->_right = NULL;
-			nil->_parent = NULL;
+			nil->_left = nil;
+			nil->_right = nil;
+			nil->_parent = nil;
 			root = nil;
 		};
 		
