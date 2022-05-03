@@ -2,16 +2,16 @@
 
 int main() {
 
-	ft::RedBlackTree<ft::pair<int, char>, std::less<ft::pair<int, char>>> yo;
+	ft::RedBlackTree<int, std::less<int>> yo;
 
-	yo.insert(ft::pair<5, 'c'>);
-	// yo.insert(12);
-	// yo.insert(96);
-	// yo.insert(1);
-	// yo.insert(3);
-	// yo.insert(42);
-	// yo.insert(37);
-	// yo.insert(25);
+	yo.insert(5);
+	yo.insert(12);
+	yo.insert(96);
+	yo.insert(1);
+	yo.insert(3);
+	yo.insert(42);
+	yo.insert(37);
+	yo.insert(25);
 
 	ft::RBTIterator<int> it = yo.begin();
 	ft::RBTIterator<int> ite = yo.end();

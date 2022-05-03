@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/09 07:19:59 by wluong            #+#    #+#             */
-/*   Updated: 2022/05/01 14:44:05 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/03 04:12:58 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ namespace ft {
 
 			iterator it = find(x);
 			if (it.get_node() != nil) {
-				return nil;
+				return it.get_node();
 			}
 			Node *z = new_node(x);
 			Node *y = nil;
@@ -169,7 +169,7 @@ namespace ft {
 			while (tmp->_left != nil) {
 				tmp = tmp->_left;
 			}
-			return iterator(tmp, nil);
+			return iterator(tmp, nil, root);
 		};
 
 		const_iterator begin() const {
@@ -177,15 +177,15 @@ namespace ft {
 			while (tmp->_left != nil) {
 				tmp = tmp->_left;
 			}
-			return const_iterator(tmp, nil);
+			return const_iterator(tmp, nil, root);
 		};
 
 		iterator end() {
-			return iterator(nil, nil);
+			return iterator(nil, nil, root);
 		};
 
 		const_iterator end() const {
-			return const_iterator(nil, nil);
+			return const_iterator(nil, nil, root);
 		};
 
 		reverse_iterator rbegin() {
@@ -260,7 +260,7 @@ namespace ft {
 			if (tmp != nil) {
 				while (tmp != nil) {
 					if (tmp->_data == x)
-						return iterator(tmp, nil);
+						return iterator(tmp, nil, root);
 					else if (tmp->_data > x) {
 						tmp = tmp->_left;
 					}
@@ -277,7 +277,7 @@ namespace ft {
 			if (tmp != nil) {
 				while (tmp != nil) {
 					if (tmp->_data == x)
-						return const_iterator(tmp, nil);
+						return const_iterator(tmp, nil, root);
 					else if (tmp->_data > x) {
 						tmp = tmp->_left;
 					}
@@ -288,11 +288,6 @@ namespace ft {
 			}
 			return end();
 		};
-
-		// const_iterator find(const value_type& x) const {
-		// 	const_iterator it = const_iterator(root, nil);
-		// 	return _recursive_find(it, x);
-		// };
 
 		bool empty() const {
 			return _size == 0 ? 1 : 0;
@@ -311,33 +306,55 @@ namespace ft {
 		};
 
 		iterator lower_bound(const value_type& x) {
-			iterator it = find(x);
-			if (it.get_node() == nil)
-				return begin();
+			// iterator it = find(x);
+			// if (it.get_node() == nil)
+			// 	return begin();
+			// return it;
+			iterator it = begin();
+			if (x < *it)
+				return it;
+			it = find(x);
 			return it;
 		};
 
 		const_iterator lower_bound(const value_type& x) const {
-			const_iterator it = find(x);
-			if (it.get_node() == nil)
-				return begin();
-			return (it);
+			// const_iterator it = find(x);
+			// if (it.get_node() == nil)
+			// 	return begin();
+			// return (it);
+			const_iterator it = begin();
+			if (x < *it)
+				return it;
+			it = find(x);
+			return it;
 		};
 		
 		iterator upper_bound(const value_type& x) {
-			iterator it = find(x);
-			if (it == end())
-				return iterator(root, nil);
+			// iterator it = find(x);
+			// if (it == end())
+			// 	return iterator(root, nil, root);
+			// it++;
+			// return (it);
+			iterator it = begin();
+			if (x < *it)
+				return it;
+			it = find(x);
 			it++;
-			return (it);
+			return it;
 		};
 		
 		const_iterator upper_bound(const value_type& x) const {
-			const_iterator it = find(x);
-			if (it == end())
-				return const_iterator(root, nil);
+			// const_iterator it = find(x);
+			// if (it == end())
+			// 	return const_iterator(root, nil, root);
+			// it++;
+			// return (it);
+			const_iterator it = begin();
+			if (x < *it)
+				return it;
+			it = find(x);
 			it++;
-			return (it);
+			return it;
 		};
 
 		void	print(void)
@@ -465,10 +482,11 @@ namespace ft {
 		};
 
 		Node	*minimum(Node *x) {
-			while (x->_left != nil) {
-				x = x->_left;
+			Node *tmp = x;
+			while (tmp->_left != nil) {
+				tmp = tmp->_left;
 			}
-			return x;
+			return tmp;
 		};
 
 		void	_deleteFixup( Node *x ) {
@@ -604,7 +622,7 @@ namespace ft {
 
 /***************************************************************************
 ****************************************************************************
-*************					NODES FUNCTIONS					************
+*************			 		NODES FUNCTIONS					************
 ****************************************************************************
 ***************************************************************************/
 
@@ -625,6 +643,7 @@ namespace ft {
 		void	destroy_node(Node *x) {
 			this->_alloc.destroy(x);
 			_alloc.deallocate(x, 1);
+			_size--;
 		};
 
 		Node			*root;

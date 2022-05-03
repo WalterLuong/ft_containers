@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/09 04:28:40 by wluong            #+#    #+#             */
-/*   Updated: 2022/05/01 04:08:39 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/03 04:22:08 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,11 +76,12 @@ namespace ft {
 			insert(first, last);
 		};
 
-		map(const map<Key,T,Compare,Allocator>& x) : rbt(value_compare(Compare())), _alloc(Allocator()), _cmp(Compare()) {
-			const_iterator it = x.begin();
-			for (; it != x.end(); it++) {
-				insert(*it);
-			}
+		map(const map<Key,T,Compare,Allocator>& x) : rbt(value_compare(x._cmp)), _alloc(Allocator()), _cmp(Compare()) {
+			// const_iterator it = x.begin();
+			// for (; it != x.end(); it++) {
+			// 	insert(*it);
+			// }
+			insert(x.begin(), x.end());
 		};
 
 		~map() {
@@ -141,19 +142,20 @@ namespace ft {
 ***************************************************************************/
 
 		pair<iterator, bool> insert(const value_type& x) {
-			iterator it = iterator(rbt.insert(x), rbt.getNil());
-			if (it.get_node() == rbt.getNil())
+			iterator f = find(x.first);
+			iterator it = iterator(rbt.insert(x), rbt.getNil(), rbt.getRoot());
+			if (f.get_node() != rbt.getNil())
 				return ft::make_pair(it, 0);
 			return ft::make_pair(it, 1);
 		};
 		
 		iterator insert(iterator position, const value_type& x) {
 			(void)position;
-			return iterator(rbt.insert(x), rbt.getNil());
+			return iterator(rbt.insert(x), rbt.getNil(), rbt.getRoot());
 		};
 		
 		template <class InputIterator>
-		void insert(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL) {
+		void insert(InputIterator first, InputIterator last) {
 			for (; first != last; first++) {
 				insert(*first);
 			}
@@ -189,11 +191,11 @@ namespace ft {
 			rbt.clear();
 		};
 		
-		// void swap(map<Key,T,Compare,Allocator>& other) {
-
-		// 	rbt.swap(other.rbt);
-		// 	std::swap(_cmp, other._cmp);
-		// };
+		void swap(map<Key,T,Compare,Allocator>& other) {
+			std::swap(rbt, other.rbt);
+			std::swap(_alloc, other._alloc);
+			std::swap(_cmp, other._cmp);
+		};
 
 /***************************************************************************
 ****************************************************************************
