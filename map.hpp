@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/09 04:28:40 by wluong            #+#    #+#             */
-/*   Updated: 2022/05/03 04:22:08 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/03 06:26:15 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,7 +192,7 @@ namespace ft {
 		};
 		
 		void swap(map<Key,T,Compare,Allocator>& other) {
-			std::swap(rbt, other.rbt);
+			rbt.swap(other.rbt);
 			std::swap(_alloc, other._alloc);
 			std::swap(_cmp, other._cmp);
 		};
@@ -268,13 +268,7 @@ namespace ft {
 
 	template <class Key, class T, class Compare, class Allocator>
 	bool operator==(const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y) {
-			if (x.size() != y.size())
-			return false;
-		for (size_t j = 0; j < x.size(); j++) {
-			if (x[j] != y[j])
-				return false;
-		}
-		return true;
+		return ft::equal(x.begin(), x.end(), y.begin());
 	};
 
 	template <class Key, class T, class Compare, class Allocator>
@@ -303,7 +297,9 @@ namespace ft {
 	};
 	
 	template <class Key, class T, class Compare, class Allocator>
-	void swap(map<Key,T,Compare,Allocator>& x, map<Key,T,Compare,Allocator>& y);
+	void swap(map<Key,T,Compare,Allocator>& x, map<Key,T,Compare,Allocator>& y) {
+		x.swap(y);
+	};
 }
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/09 07:19:59 by wluong            #+#    #+#             */
-/*   Updated: 2022/05/03 04:12:58 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/03 06:16:50 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,7 +261,7 @@ namespace ft {
 				while (tmp != nil) {
 					if (tmp->_data == x)
 						return iterator(tmp, nil, root);
-					else if (tmp->_data > x) {
+					else if (_cmp(x, tmp->_data)) {
 						tmp = tmp->_left;
 					}
 					else {
@@ -278,7 +278,7 @@ namespace ft {
 				while (tmp != nil) {
 					if (tmp->_data == x)
 						return const_iterator(tmp, nil, root);
-					else if (tmp->_data > x) {
+					else if (_cmp(x, tmp->_data)) {
 						tmp = tmp->_left;
 					}
 					else {
@@ -346,7 +346,7 @@ namespace ft {
 		const_iterator upper_bound(const value_type& x) const {
 			// const_iterator it = find(x);
 			// if (it == end())
-			// 	return const_iterator(root, nil, root);
+			//	return const_iterator(root, nil, root);
 			// it++;
 			// return (it);
 			const_iterator it = begin();
@@ -370,7 +370,7 @@ namespace ft {
 		}
 
 
-		void swap(RedBlackTree<Compare, Node, Allocator>& other) {
+		void swap(RedBlackTree& other) {
 			std::swap(root, other.root);
 			std::swap(nil, other.nil);
 			std::swap(_cmp, other._cmp);

@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/04 23:54:04 by wluong            #+#    #+#             */
-/*   Updated: 2022/05/03 04:40:00 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/03 06:05:00 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,19 +182,19 @@ namespace	ft {
 			}
 
 			Node	*maximum() {
-				// Node *tmp = root;
-				// while (tmp->_right != nil) {
-				// 	tmp = tmp->_right;
-				// }
-				// return tmp;
-				Node *tmp = _pnode;
-				while (tmp->_parent != nil) {
-					tmp = tmp->_parent;
-				}
+				Node *tmp = root;
 				while (tmp->_right != nil) {
 					tmp = tmp->_right;
 				}
 				return tmp;
+				// Node *tmp = _pnode;
+				// while (tmp->_parent != nil) {
+				// 	tmp = tmp->_parent;
+				// }
+				// while (tmp->_right != nil) {
+				// 	tmp = tmp->_right;
+				// }
+				// return tmp;
 			}
 
 			Node	*_pnode;
@@ -337,24 +337,24 @@ namespace	ft {
 				}
 			}
 
-			// Node	*maximum() {
-			// 	Node *tmp = root;
-			// 	while (tmp->_right != nil) {
-			// 		tmp = tmp->_right;
-			// 	}
-			// 	return tmp;
-			// }
-
 			Node	*maximum() {
-				Node *tmp = _pnode;
-				while (tmp->_parent != nil) {
-					tmp = tmp->_parent;
-				}
+				Node *tmp = root;
 				while (tmp->_right != nil) {
 					tmp = tmp->_right;
 				}
 				return tmp;
 			}
+
+			// Node	*maximum() {
+			// 	Node *tmp = _pnode;
+			// 	while (tmp->_parent != nil) {
+			// 		tmp = tmp->_parent;
+			// 	}
+			// 	while (tmp->_right != nil) {
+			// 		tmp = tmp->_right;
+			// 	}
+			// 	return tmp;
+			// }
 
 			Node	*_pnode;
 			Node	*nil;
