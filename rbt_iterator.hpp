@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/04 23:54:04 by wluong            #+#    #+#             */
-/*   Updated: 2022/05/03 06:05:00 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/05 06:58:12 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ namespace	ft {
 				this->_parent = n._parent;
 				this->_data = n._data;
 				this->_color = n._color;
+				return *this;
 			};
 
 			node<T>		*_left;
@@ -89,23 +90,21 @@ namespace	ft {
 			const pointer operator->() const { return &(_pnode->_data); };
 
 			RBTIterator&	operator++() {
-				if (_pnode == maximum()) {
-					_pnode = nil;
-					return *this;
-				}
-				if (_pnode != nil)
-					Increment();
+				// if (_pnode == maximum()) {
+				// 	_pnode = nil;
+				// 	return *this;
+				// }
+				Increment();
 				return *this;
 			};
 
 			RBTIterator	operator++(int) {
 				self tmp(*this);
-				if (_pnode == maximum()) {
-					_pnode = nil;
-					return tmp;
-				}
-				if (_pnode != nil)
-					Increment();
+				// if (_pnode == maximum()) {
+				// 	_pnode = nil;
+				// 	return tmp;
+				// }
+				Increment();
 				return tmp;
 			};
 
@@ -134,6 +133,8 @@ namespace	ft {
 
 			Node *	get_root() const { return root; };
 
+			void	set_root( Node *r ) { root = r; };
+
 			bool operator==( const RBTIterator& s ) {
 				return _pnode == s._pnode;
 			};
@@ -159,6 +160,8 @@ namespace	ft {
 					}
 					if (_pnode->_left != tmp)
 						_pnode = tmp;
+					else
+						_pnode = nil;
 				}
 			}
 
@@ -187,14 +190,14 @@ namespace	ft {
 					tmp = tmp->_right;
 				}
 				return tmp;
-				// Node *tmp = _pnode;
-				// while (tmp->_parent != nil) {
-				// 	tmp = tmp->_parent;
-				// }
-				// while (tmp->_right != nil) {
-				// 	tmp = tmp->_right;
-				// }
-				// return tmp;
+			// 	Node *tmp = _pnode;
+			// 	while (tmp->_parent != nil) {
+			// 		tmp = tmp->_parent;
+			// 	}
+			// 	while (tmp->_right != nil) {
+			// 		tmp = tmp->_right;
+			// 	}
+			// 	return tmp;
 			}
 
 			Node	*_pnode;
@@ -229,7 +232,7 @@ namespace	ft {
 			template <class S>
 			const_RBTIterator &operator=(const const_RBTIterator<S>& s)
 			{
-				_pnode = s.get_node();
+				_pnode->_data = s.get_node()->_data;
 				nil = s.get_nil();
 				root =s.get_root();
 				return *this;
@@ -290,6 +293,8 @@ namespace	ft {
 
 			Node *	get_root() const { return root; };
 
+			void	set_root( Node *r ) { root = r; };
+
 			bool operator==( const const_RBTIterator& s ) {
 				return _pnode == s._pnode;
 			};
@@ -315,6 +320,8 @@ namespace	ft {
 					}
 					if (_pnode->_left != tmp)
 						_pnode = tmp;
+					else
+						_pnode = nil;
 				}
 			}
 
@@ -344,17 +351,6 @@ namespace	ft {
 				}
 				return tmp;
 			}
-
-			// Node	*maximum() {
-			// 	Node *tmp = _pnode;
-			// 	while (tmp->_parent != nil) {
-			// 		tmp = tmp->_parent;
-			// 	}
-			// 	while (tmp->_right != nil) {
-			// 		tmp = tmp->_right;
-			// 	}
-			// 	return tmp;
-			// }
 
 			Node	*_pnode;
 			Node	*nil;

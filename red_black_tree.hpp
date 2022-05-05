@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/09 07:19:59 by wluong            #+#    #+#             */
-/*   Updated: 2022/05/03 06:16:50 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/05 07:13:37 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ namespace ft {
 			typedef ft::RBTIterator<T>						iterator;
 			typedef ft::const_RBTIterator<T>				const_iterator;
 			typedef ft::reverse_iterator<iterator> 			reverse_iterator;
-			typedef ft::reverse_iterator<const_iterator> 	const_reverse_iterator;
+			typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 		
 		public:
 
@@ -137,7 +137,7 @@ namespace ft {
 			}
 			while (u != nil) {
 				y = u;
-				if (z->_data < u->_data)
+				if (_cmp(z->_data, u->_data)  /*z->_data < u->_data*/)
 					u = u->_left;
 				else
 					u = u->_right;
@@ -146,7 +146,7 @@ namespace ft {
 			if (y == nil) {
 				root = z;
 			}
-			else if (z->_data < y->_data) {
+			else if (_cmp(z->_data, y->_data) /* z->_data < y->_data*/) {
 				y->_left = z;
 			}
 			else {
@@ -215,7 +215,6 @@ namespace ft {
 
 		Node * getNil() { return nil; };
 
-
 		void _InOrder(Node *z)
 		{
 			if (z != nil)
@@ -231,19 +230,6 @@ namespace ft {
 *************					MAP FONCTIONS					************
 ***************************************************************************/
 
-		// void erase(iterator first, iterator last) {
-		// 	iterator	it;
-		// 	it = this->begin();
-		// 	while (it != first) {
-		// 		it++;
-		// 	}
-		// 	for (; first != last; first++) {
-		// 		erase(*it);
-		// 		it++;
-		// 	}
-		// };
-
-
 		void clear() {
 			Node *tmp = root;
 			while (tmp != nil) {
@@ -253,13 +239,10 @@ namespace ft {
 		};
 
 		iterator find(const value_type& x) {
-
-			// iterator it = iterator(root, nil);
-			// return _recursive_find(it, x);
 			Node *tmp = root;
 			if (tmp != nil) {
 				while (tmp != nil) {
-					if (tmp->_data == x)
+					if (!_cmp(tmp->_data, x) && !_cmp(x, tmp->_data))
 						return iterator(tmp, nil, root);
 					else if (_cmp(x, tmp->_data)) {
 						tmp = tmp->_left;
@@ -276,7 +259,7 @@ namespace ft {
 			Node *tmp = root;
 			if (tmp != nil) {
 				while (tmp != nil) {
-					if (tmp->_data == x)
+					if (!_cmp(tmp->_data, x) && !_cmp(x, tmp->_data))
 						return const_iterator(tmp, nil, root);
 					else if (_cmp(x, tmp->_data)) {
 						tmp = tmp->_left;
@@ -306,55 +289,49 @@ namespace ft {
 		};
 
 		iterator lower_bound(const value_type& x) {
-			// iterator it = find(x);
-			// if (it.get_node() == nil)
-			// 	return begin();
-			// return it;
 			iterator it = begin();
-			if (x < *it)
+			if (_cmp(x,*it))
 				return it;
 			it = find(x);
 			return it;
 		};
 
 		const_iterator lower_bound(const value_type& x) const {
-			// const_iterator it = find(x);
-			// if (it.get_node() == nil)
-			// 	return begin();
-			// return (it);
 			const_iterator it = begin();
-			if (x < *it)
+			if (_cmp(x,*it))
 				return it;
 			it = find(x);
 			return it;
 		};
 		
 		iterator upper_bound(const value_type& x) {
-			// iterator it = find(x);
-			// if (it == end())
-			// 	return iterator(root, nil, root);
-			// it++;
-			// return (it);
-			iterator it = begin();
-			if (x < *it)
-				return it;
-			it = find(x);
-			it++;
-			return it;
+			// iterator it = begin();
+			// if (_cmp(x,*it))
+			// 	return it;
+			// it = find(x);
+			// it--;
+			// return it;
+			iterator	ite = end();
+			iterator	it = lower_bound(x);
+
+			if (it != ite && !_cmp(x,*it) && !_cmp(*it, x))
+				return (++it);
+			return (it);
 		};
 		
 		const_iterator upper_bound(const value_type& x) const {
-			// const_iterator it = find(x);
-			// if (it == end())
-			//	return const_iterator(root, nil, root);
+			// const_iterator it = begin();
+			// if (_cmp(x,*it))
+			// 	return it;
+			// it = find(x);
 			// it++;
-			// return (it);
-			const_iterator it = begin();
-			if (x < *it)
-				return it;
-			it = find(x);
-			it++;
-			return it;
+			// return it;
+			const_iterator	ite = end();
+			const_iterator	it = lower_bound(x);
+
+			if (it != ite && !_cmp(x,*it) && !_cmp(*it, x))
+				return (++it);
+			return (it);
 		};
 
 		void	print(void)
@@ -367,7 +344,7 @@ namespace ft {
 				_print(root, buffer, true, "");
 				std::cout << buffer.str();
 			}
-		}
+		};
 
 
 		void swap(RedBlackTree& other) {
@@ -375,7 +352,7 @@ namespace ft {
 			std::swap(nil, other.nil);
 			std::swap(_cmp, other._cmp);
 			std::swap(_size, other._size);
-		}
+		};
 
 		private:
 		
@@ -586,27 +563,6 @@ namespace ft {
 			}
 			destroy_node(z);
 		};
-
-		iterator _recursive_find(iterator it, const value_type & x) {
-			if (!_cmp(*it, x) && !_cmp(x, *it))
-				return it;
-			if (it != end() && !_cmp(*it, x))
-				return _recursive_find(it--, x);
-			if (it != end() && !_cmp(x, *it))
-				return _recursive_find(it++, x);
-			return end();
-		};
-
-		// const_iterator _recursive_find(const_iterator it, const value_type & x) {
-		// 	if (!_cmp(*it, x) && !_cmp(x, *it))
-		// 		return it;
-		// 	if (it != end() && !_cmp(*it, x))
-		// 		return _recursive_find(it++, x);
-		// 	if (it != end() && !_cmp(x, *it))
-		// 		return _recursive_find(it--, x);
-		// 	if (it == end())
-		// 		return end();
-		// };
 
 		void	_print(Node * node, std::stringstream &buffer, bool isTail, std::string prefix)
 		{

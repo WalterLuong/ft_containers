@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/09 04:28:40 by wluong            #+#    #+#             */
-/*   Updated: 2022/05/03 06:26:15 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/05 06:34:41 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,10 +180,12 @@ namespace ft {
 		};
 		
 		void erase(iterator first, iterator last) {
+			iterator tmp;
 			while (first != last) {
-				iterator it = first;
-				this->erase(it);
-				first++;
+				tmp = first;
+				tmp++;
+				erase(first);
+				first = tmp;
 			}
 		};
 		
@@ -257,24 +259,30 @@ namespace ft {
 			return ft::make_pair(lower_bound(x), upper_bound(x));
 		};
 
+
+
+
 		private :
 
-		RedBlackTree<value_type, value_compare>			rbt;
-		allocator_type									_alloc;
-		value_compare									_cmp;
+		RedBlackTree<value_type, value_compare>		rbt;
+		allocator_type								_alloc;
+		value_compare								_cmp;
 
 
 	};
-
+	
 	template <class Key, class T, class Compare, class Allocator>
 	bool operator==(const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y) {
-		return ft::equal(x.begin(), x.end(), y.begin());
+	if (x.size() != y.size())
+		return false;
+	return ft::equal(x.begin(), x.end(), y.begin());
 	};
 
 	template <class Key, class T, class Compare, class Allocator>
 	bool operator< (const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y) {
 		return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
 	};
+
 
 	template <class Key, class T, class Compare, class Allocator>
 	bool operator!=(const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y) {
