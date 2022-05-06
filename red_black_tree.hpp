@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/09 07:19:59 by wluong            #+#    #+#             */
-/*   Updated: 2022/05/05 07:13:37 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/06 02:19:03 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,18 +289,38 @@ namespace ft {
 		};
 
 		iterator lower_bound(const value_type& x) {
+//			iterator it = begin();
+//			if (_cmp(x,*it))
+//				return it;
+//			it = find(x);
+//			return it;
 			iterator it = begin();
-			if (_cmp(x,*it))
-				return it;
-			it = find(x);
+			iterator ite = end();
+			for (; it != ite; it++)
+			{
+				if (_cmp(*it, x))
+					;
+				else
+					break;
+			}
 			return it;
 		};
 
 		const_iterator lower_bound(const value_type& x) const {
-			const_iterator it = begin();
-			if (_cmp(x,*it))
-				return it;
-			it = find(x);
+//			const_iterator it = begin();
+//			if (_cmp(x,*it))
+//				return it;
+//			it = find(x);
+//			return it;
+			iterator it = begin();
+			iterator ite = end();
+			for (; it != ite; it++)
+			{
+				if (_cmp(*it, x))
+					;
+				else
+					break;
+			}
 			return it;
 		};
 		
