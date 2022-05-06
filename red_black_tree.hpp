@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/09 07:19:59 by wluong            #+#    #+#             */
-/*   Updated: 2022/05/06 02:19:03 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/06 20:24:59 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,11 +289,6 @@ namespace ft {
 		};
 
 		iterator lower_bound(const value_type& x) {
-//			iterator it = begin();
-//			if (_cmp(x,*it))
-//				return it;
-//			it = find(x);
-//			return it;
 			iterator it = begin();
 			iterator ite = end();
 			for (; it != ite; it++)
@@ -307,13 +302,8 @@ namespace ft {
 		};
 
 		const_iterator lower_bound(const value_type& x) const {
-//			const_iterator it = begin();
-//			if (_cmp(x,*it))
-//				return it;
-//			it = find(x);
-//			return it;
-			iterator it = begin();
-			iterator ite = end();
+			const_iterator it = begin();
+			const_iterator ite = end();
 			for (; it != ite; it++)
 			{
 				if (_cmp(*it, x))
@@ -325,12 +315,6 @@ namespace ft {
 		};
 		
 		iterator upper_bound(const value_type& x) {
-			// iterator it = begin();
-			// if (_cmp(x,*it))
-			// 	return it;
-			// it = find(x);
-			// it--;
-			// return it;
 			iterator	ite = end();
 			iterator	it = lower_bound(x);
 
@@ -340,12 +324,6 @@ namespace ft {
 		};
 		
 		const_iterator upper_bound(const value_type& x) const {
-			// const_iterator it = begin();
-			// if (_cmp(x,*it))
-			// 	return it;
-			// it = find(x);
-			// it++;
-			// return it;
 			const_iterator	ite = end();
 			const_iterator	it = lower_bound(x);
 
@@ -374,13 +352,14 @@ namespace ft {
 			std::swap(_size, other._size);
 		};
 
-		private:
 		
 /***************************************************************************
 ****************************************************************************
 *************					RBT FONCTIONS					************
 ****************************************************************************
 ***************************************************************************/
+		
+		private:
 
 		void	left_rotate(Node *x) {
 			Node *y = x->_right;

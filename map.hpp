@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/09 04:28:40 by wluong            #+#    #+#             */
-/*   Updated: 2022/05/05 06:34:41 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/06 20:26:34 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,16 +77,10 @@ namespace ft {
 		};
 
 		map(const map<Key,T,Compare,Allocator>& x) : rbt(value_compare(x._cmp)), _alloc(Allocator()), _cmp(Compare()) {
-			// const_iterator it = x.begin();
-			// for (; it != x.end(); it++) {
-			// 	insert(*it);
-			// }
 			insert(x.begin(), x.end());
 		};
 
-		~map() {
-			// rbt->~RedBlackTree();
-		};
+		~map() {};
 
 		map<Key,T,Compare,Allocator>& operator=(const map<Key,T,Compare,Allocator>& x) {
 			this->clear();
@@ -160,10 +154,6 @@ namespace ft {
 				insert(*first);
 			}
 		};
-
-		const_iterator find(const key_type& x) const {
-			return rbt.find(ft::make_pair(x, T()));
-		};
 		
 /***************************************************************************
 ****************************************************************************
@@ -223,6 +213,10 @@ namespace ft {
 			return rbt.find(ft::make_pair(x, T()));
 		};
 
+		const_iterator find(const key_type& x) const {
+			return rbt.find(ft::make_pair(x, T()));
+		};
+
 		size_type count(const key_type& x) const {
 			return rbt.count(ft::make_pair(x, T()));
 		};
@@ -260,8 +254,6 @@ namespace ft {
 		};
 
 
-
-
 		private :
 
 		RedBlackTree<value_type, value_compare>		rbt;
@@ -273,9 +265,9 @@ namespace ft {
 	
 	template <class Key, class T, class Compare, class Allocator>
 	bool operator==(const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y) {
-	if (x.size() != y.size())
-		return false;
-	return ft::equal(x.begin(), x.end(), y.begin());
+		if (x.size() != y.size())
+			return false;
+		return ft::equal(x.begin(), x.end(), y.begin());
 	};
 
 	template <class Key, class T, class Compare, class Allocator>

@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/04 23:54:04 by wluong            #+#    #+#             */
-/*   Updated: 2022/05/05 06:58:12 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/06 18:23:56 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,20 +90,13 @@ namespace	ft {
 			const pointer operator->() const { return &(_pnode->_data); };
 
 			RBTIterator&	operator++() {
-				// if (_pnode == maximum()) {
-				// 	_pnode = nil;
-				// 	return *this;
-				// }
+
 				Increment();
 				return *this;
 			};
 
 			RBTIterator	operator++(int) {
 				self tmp(*this);
-				// if (_pnode == maximum()) {
-				// 	_pnode = nil;
-				// 	return tmp;
-				// }
 				Increment();
 				return tmp;
 			};
@@ -190,15 +183,7 @@ namespace	ft {
 					tmp = tmp->_right;
 				}
 				return tmp;
-			// 	Node *tmp = _pnode;
-			// 	while (tmp->_parent != nil) {
-			// 		tmp = tmp->_parent;
-			// 	}
-			// 	while (tmp->_right != nil) {
-			// 		tmp = tmp->_right;
-			// 	}
-			// 	return tmp;
-			}
+			};
 
 			Node	*_pnode;
 			Node	*nil;

@@ -6,7 +6,7 @@
 /*   By: wluong <wluong@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/13 00:53:43 by wluong            #+#    #+#             */
-/*   Updated: 2022/05/05 03:52:57 by wluong           ###   ########.fr       */
+/*   Updated: 2022/05/06 16:58:01 by wluong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,7 +251,7 @@ namespace	ft {
 			}
 			for (difference_type i(_size - 1); i >= distance; i--) {
 				_alloc.construct(_pointer + n + i, _pointer[i]);
-				// _alloc.destroy(_pointer + i);
+				_alloc.destroy(_pointer + i);
 			}
 			_size += n;
 			for (size_type j(0); j < n; j++) {
@@ -280,7 +280,7 @@ namespace	ft {
 				}
 				for (difference_type i(prev_size - 1); i >= distance; i--) {
 					_alloc.construct(&_pointer[it_dist + i], _pointer[i]);
-					// _alloc.destroy(_pointer + i);
+					_alloc.destroy(_pointer + i);
 				}
 				while (first != last) {
 					_alloc.construct(&_pointer[j + distance], *first++);
